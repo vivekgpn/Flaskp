@@ -1,0 +1,59 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Assignment Form (Express → Flask)</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    body { font-family: Arial, sans-serif; padding: 2rem; max-width: 700px; margin: auto; }
+    input, textarea { width: 100%; padding: .5rem; margin: .5rem 0; }
+    label { font-weight: bold; margin-top: .5rem; display:block; }
+    button { padding: .6rem 1rem; margin-top: 1rem; cursor: pointer; }
+    .result { margin-top: 1rem; white-space: pre-wrap; }
+  </style>
+</head>
+<body>
+  <h1>Assignment Form (Express → Flask)</h1>
+  <form id="mainForm">
+    <label for="name">Name</label>
+    <input id="name" name="name" required />
+
+    <label for="email">Email</label>
+    <input id="email" name="email" type="email" required />
+
+    <label for="message">Message</label>
+    <textarea id="message" name="message" required></textarea>
+
+    <button type="submit">Send to Flask backend</button>
+  </form>
+
+  <div class="result" id="result"></div>
+
+  <script>
+    const form = document.getElementById("mainForm");
+    const resultDiv = document.getElementById("result");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const payload = {
+        name: form.name.value,
+        email: form.email.value,
+        message: form.message.value
+      };
+
+      try {
+        const res = await fetch("/submit", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        resultDiv.textContent = JSON.stringify(data, null, 2);
+      } catch (err) {
+        resultDiv.textContent = `Frontend failed to send request: ${err.message}`;
+      }
+    });
+  </script>
+</body>
+</html>
